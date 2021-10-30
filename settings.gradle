@@ -1,0 +1,2 @@
+rootProject.name = 'moneybox'
+include 'moneybox-api', 'moneybox-plugin'

@@ -1,0 +1,6 @@
+# Project exclude paths
+/.gradle/
+/moneybox-api/build/
+/moneybox-api/build/classes/java/main/
+/moneybox-plugin/build/
+/moneybox-plugin/build/classes/java/main/

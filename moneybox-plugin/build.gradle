@@ -1,0 +1,57 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
+import static java.nio.file.Files.copy
+import static java.nio.file.Paths.get
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+def artifactName = 'Moneybox.jar'
+
+tasks {
+    shadowJar {
+        archiveFileName = artifactName
+
+        ['cloud.cloudframework'].each {
+            shadowJar.relocate(it, "${rootProject.group}.${rootProject.name}.shaded.${it.tokenize('.').last()}")
+        }
+
+        doLast {
+            distribute
+        }
+    }
+
+    build {
+        dependsOn shadowJar
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            from project.shadow.component(publication)
+            artifactId = "${rootProject.name}"
+        }
+    }
+}
+
+dependencies {
+    api project(':moneybox-api')
+
+    compileOnly 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+    annotationProcessor 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+}
+
+// Distribute artifact to environments
+tasks.register('distribute') {
+    def artifact = get "$project.projectDir/build/libs/$artifactName"
+    if (Files.notExists(artifact)) {
+        return
+    }
+    ['arclight', 'catserver', 'crucible'].each {
+        def destination = get "D:/Servers/$it/plugins/$artifactName"
+        copy artifact, destination, StandardCopyOption.REPLACE_EXISTING
+    }
+}

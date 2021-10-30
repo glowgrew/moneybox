@@ -1,0 +1,35 @@
+allprojects {
+    group = 'ru.glowgrew'
+    version = '1.0-SNAPSHOT'
+}
+
+subprojects {
+    pluginManager.apply('java-library')
+    pluginManager.apply('maven-publish')
+
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+    tasks {
+        compileJava {
+            options.encoding = 'UTF-8'
+        }
+
+        compileTestJava {
+            options.encoding = 'UTF-8'
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    }
+
+    dependencies {
+        compileOnlyApi 'org.jetbrains:annotations:22.0.0'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    }
+}
