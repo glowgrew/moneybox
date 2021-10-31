@@ -7,8 +7,4 @@ public class UnknownEnvironment implements ServerEnvironment {
         return "Unknown";
     }
 
-    @Override
-    public Type getType() {
-        return Type.UNKNOWN;
-    }
 }

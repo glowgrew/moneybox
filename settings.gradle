@@ -1,2 +1,3 @@
 rootProject.name = 'moneybox'
-include 'moneybox-api', 'moneybox-plugin'
+include 'moneybox-api', 'moneybox-plugin', 'moneybox-r2dbc', 'moneybox-environment'
+

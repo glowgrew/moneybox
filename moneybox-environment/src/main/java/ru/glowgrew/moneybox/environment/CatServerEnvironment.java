@@ -7,8 +7,4 @@ public class CatServerEnvironment implements ServerEnvironment {
         return "CatServer";
     }
 
-    @Override
-    public Type getType() {
-        return Type.CATSERVER;
-    }
 }

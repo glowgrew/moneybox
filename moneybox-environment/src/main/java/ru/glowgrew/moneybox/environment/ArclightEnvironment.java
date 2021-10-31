@@ -7,8 +7,4 @@ public class ArclightEnvironment implements ServerEnvironment {
         return "Arclight";
     }
 
-    @Override
-    public Type getType() {
-        return Type.ARCLIGHT;
-    }
 }
