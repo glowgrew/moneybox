@@ -7,8 +7,4 @@ public class CrucibleEnvironment implements ServerEnvironment {
         return "Crucible";
     }
 
-    @Override
-    public Type getType() {
-        return Type.CRUCIBLE;
-    }
 }

@@ -7,8 +7,4 @@ public class CraftbukkitEnvironment implements ServerEnvironment {
         return "CraftBukkit";
     }
 
-    @Override
-    public Type getType() {
-        return Type.CRAFTBUKKIT;
-    }
 }

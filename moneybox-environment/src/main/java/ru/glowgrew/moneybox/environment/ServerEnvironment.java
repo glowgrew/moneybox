@@ -4,8 +4,6 @@ public interface ServerEnvironment {
 
     String getName();
 
-    Type getType();
-
     enum Type {
 
         CRUCIBLE(CrucibleEnvironment.class, "io.github.crucible.Crucible"),
