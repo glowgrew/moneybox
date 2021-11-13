@@ -1,7 +1,4 @@
-import java.nio.file.Files
-
-import static java.nio.file.Files.copy
-import static java.nio.file.Files.deleteIfExists
+import static java.nio.file.Files.*
 import static java.nio.file.Paths.get
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
@@ -10,25 +7,27 @@ plugins {
 }
 
 def artifactName = 'Moneybox.jar'
-def environments = ['arclight', 'catserver', 'crucible']
+
+def environmentsDir = get "D:/Servers/"
+def environmentArtifacts = ['arclight', 'catserver', 'crucible'].collect {
+    environmentsDir.resolve "$it/plugins/$artifactName"
+}
 
 // Distribute artifact to environments
-tasks.register('distribute') {
-    def artifact = get "$project.projectDir/build/libs/$artifactName"
-    if (Files.notExists(artifact)) {
+tasks.register('distributeArtifacts') {
+    def artifact = get "${project.tasks.shadowJar.destinationDirectory.get()}/$artifactName"
+    if (notExists(artifact)) {
         return
     }
-    environments.each {
-        def destination = get "D:/Servers/$it/plugins/$artifactName"
-        copy artifact, destination, REPLACE_EXISTING
+    environmentArtifacts.each {
+        copy artifact, it, REPLACE_EXISTING
     }
 }
 
 // Delete distributed artifacts from environments
 tasks.register('deleteDistributedArtifacts') {
-    environments.each {
-        def destination = get "D:/Servers/$it/plugins/$artifactName"
-        deleteIfExists destination
+    environmentArtifacts.each {
+        deleteIfExists it
     }
 }
 
@@ -46,7 +45,7 @@ tasks {
     build {
         dependsOn shadowJar, publishToMavenLocal
         doLast {
-            distribute
+            distributeArtifacts
         }
     }
 
@@ -69,6 +68,7 @@ dependencies {
     api project(':moneybox-api')
     api project(':moneybox-environment')
     api project(':moneybox-r2dbc')
+    api project(':moneybox-localization')
 
     api "cloud.commandframework:cloud-core:$cloudVersion"
     api "cloud.commandframework:cloud-bukkit:$cloudVersion"

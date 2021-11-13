@@ -15,7 +15,7 @@ artifact_id=craftbukkit
 version=1.7.10-R0.1-SNAPSHOT
 
 cd $mvn_dir
-"${mvn_dir}/mvn.cmd" org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  \
+"${mvn_dir}/mvn.cmd" org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file \
     -Dfile=${artifact} \
     -DgroupId=${group_id} -DartifactId=${artifact_id} \
     -Dversion=${version} -Dpackaging=jar \

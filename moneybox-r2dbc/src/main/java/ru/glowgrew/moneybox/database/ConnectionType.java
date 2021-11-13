@@ -1,10 +1,10 @@
 package ru.glowgrew.moneybox.database;
 
-import ru.glowgrew.moneybox.database.postgres.PostgresConnectionFactoryProvider;
+import ru.glowgrew.moneybox.database.postgresql.PostgresqlConnectionFactoryProvider;
 
 public enum ConnectionType {
 
-    POSTGRES(PostgresConnectionFactoryProvider.class, 5432);
+    POSTGRESQL(PostgresqlConnectionFactoryProvider.class, 5432);
 
     private final Class<? extends ConnectionFactoryProvider> connectionFactoryProviderClass;
     private final int defaultPort;
