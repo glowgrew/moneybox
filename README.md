@@ -1,11 +1,11 @@
-Moneybox
-===============
+# Moneybox
 An economy plugin for different Minecraft server environments powered by Reactor Core
 
-### Features
+### Techologies used
 
-- In-game command API (powered by [cloud](https://github.com/Incendo/cloud))
-- Database connectivity (powered by [R2DBC](https://github.com/r2dbc/r2dbc-pool))
+- [R2DBC](https://github.com/r2dbc/r2dbc-pool) (database connectivity)
+- [adventure](https://github.com/KyoriPowered/adventure) (UI library)
+- [cloud](https://github.com/Incendo/cloud) (in-game command framework)
 
 ### Available environments
 
@@ -16,12 +16,13 @@ An economy plugin for different Minecraft server environments powered by Reactor
 
 ### Available connection types
 
-- `POSTGRES` - Discover connection through the PostgreSQL
+- `POSTGRESQL` - Discover connection through the PostgreSQL
 
 ### Environment variables
 
 | Name                                           | Description                      | Default value          |  
 | ---------------------------------------------- | -------------------------------  | ---------------------- |  
+| MONEYBOX__STARTING_BALANCE_AMOUNT              | Set a default balance amount     | 0                      |
 | MONEYBOX_DATASOURCE_TYPE                       | Data source type                 | POSTGRES               |
 | MONEYBOX_<MONEYBOX_DATASOURCE_TYPE>_HOST       | Data source host                 | 127.0.0.1              |  
 | MONEYBOX_<MONEYBOX_DATASOURCE_TYPE>_PORT       | Data source port                 | 5432                   |  

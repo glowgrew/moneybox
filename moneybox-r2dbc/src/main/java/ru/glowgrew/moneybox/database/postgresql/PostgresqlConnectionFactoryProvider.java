@@ -1,4 +1,4 @@
-package ru.glowgrew.moneybox.database.postgres;
+package ru.glowgrew.moneybox.database.postgresql;
 
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static java.time.Duration.ofMinutes;
 
-public class PostgresConnectionFactoryProvider implements ConnectionFactoryProvider {
+public class PostgresqlConnectionFactoryProvider implements ConnectionFactoryProvider {
 
     @Override
     public ConnectionFactory provide(ReactorCredentials credentials) {

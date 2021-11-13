@@ -1,0 +1,4 @@
+dependencies {
+    api 'net.kyori:adventure-platform-bukkit:4.0.0'
+    api 'dev.akkinoc.util:yaml-resource-bundle:2.1.0'
+}
