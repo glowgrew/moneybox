@@ -1,4 +1,4 @@
-package ru.glowgrew.moneybox.database.util;
+package ru.glowgrew.moneybox.configuration.util;
 
 import java.util.OptionalDouble;
 import java.util.OptionalInt;

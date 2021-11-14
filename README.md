@@ -30,4 +30,4 @@ An economy plugin for different Minecraft server environments powered by Reactor
 | MONEYBOX_<MONEYBOX_DATASOURCE_TYPE>_PASSWORD   | Data source password             | root                   |  
 | MONEYBOX_<MONEYBOX_DATASOURCE_TYPE>_DB         | Data source database             | database               |
 
-### Supported by MCSTUDIO _卐_
+### Supported by MCSTUDIO

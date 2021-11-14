@@ -69,6 +69,7 @@ dependencies {
     api project(':moneybox-environment')
     api project(':moneybox-r2dbc')
     api project(':moneybox-localization')
+    api project(':moneybox-configuration')
 
     api "cloud.commandframework:cloud-core:$cloudVersion"
     api "cloud.commandframework:cloud-bukkit:$cloudVersion"
