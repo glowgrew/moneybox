@@ -1,14 +1,14 @@
-package ru.glowgrew.moneybox.database;
+package ru.glowgrew.moneybox.api;
 
 import java.util.Objects;
 
-public final class ReactorCredentials {
+public final class MoneyboxCredentials {
 
     private final String host;
     private final int port;
     private final String username, password, database;
 
-    private ReactorCredentials(String host, int port, String username, String password, String database) {
+    private MoneyboxCredentials(String host, int port, String username, String password, String database) {
         this.host = host;
         this.port = port;
         this.username = username;
@@ -48,9 +48,9 @@ public final class ReactorCredentials {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ReactorCredentials)) return false;
+        if (!(o instanceof MoneyboxCredentials)) return false;
 
-        ReactorCredentials that = (ReactorCredentials) o;
+        MoneyboxCredentials that = (MoneyboxCredentials) o;
 
         if (port != that.port) return false;
         if (!host.equals(that.host)) return false;
@@ -111,11 +111,11 @@ public final class ReactorCredentials {
             return this;
         }
 
-        public ReactorCredentials build() {
+        public MoneyboxCredentials build() {
             if (port == -1) {
                 throw new IllegalStateException("port is not specified");
             }
-            return new ReactorCredentials(host, port, username, password, database);
+            return new MoneyboxCredentials(host, port, username, password, database);
         }
     }
 }

@@ -1,4 +1,4 @@
-package ru.glowgrew.moneybox.postgresql;
+package ru.glowgrew.moneybox.mysql;
 
 import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.spi.Statement;
@@ -11,37 +11,38 @@ import ru.glowgrew.moneybox.MoneyboxRepository;
 import ru.glowgrew.moneybox.ResultMapper;
 import ru.glowgrew.moneybox.api.MoneyboxApi;
 import ru.glowgrew.moneybox.api.PlayerAccount;
+import ru.glowgrew.moneybox.configuration.MoneyboxConfiguration;
 
 import java.time.Duration;
 import java.util.logging.Level;
 
-import static ru.glowgrew.moneybox.MoneyboxConstants.STARTING_BALANCE_AMOUNT;
+public class MysqlMoneyboxRepository implements MoneyboxRepository {
 
-public class DatabaseMoneyboxRepository implements MoneyboxRepository {
+    @Language("MySQL") private static final String CREATE_TABLE_QUERY =
+            "create table if not exists economy (username varchar(16) not null primary key, amount bigint not null default ?)\n";
 
-    @Language("PostgreSQL") private static final String CREATE_TABLE_QUERY =
-            "create table if not exists economy (username varchar(16) not null primary key, amount bigint not null default $1)\n";
+    @Language("MySQL") private static final String LOAD_BALANCE_QUERY =
+            "select amount from economy where username = ?\n";
 
-    @Language("PostgreSQL") private static final String LOAD_BALANCE_QUERY =
-            "select amount from economy where username = $1\n";
+    @Language("MySQL") private static final String UPDATE_BALANCE_QUERY =
+            "insert into economy (username, amount) values (?, ?) on duplicate key update amount = ?\n";
 
-    @Language("PostgreSQL") private static final String UPDATE_BALANCE_QUERY =
-            "insert into economy (username, amount) values ($1, $2) on conflict (username) do update set amount = $2\n";
+    @Language("MySQL") private static final String FETCH_TOP_ENTRIES_DESC_QUERY =
+            "select * from economy order by amount desc limit ? offset ?\n";
 
-    @Language("PostgreSQL") private static final String FETCH_TOP_ENTRIES_DESC_QUERY =
-            "select * from economy order by amount desc limit $1 offset $2\n";
-
-    @Language("PostgreSQL") private static final String FETCH_TOP_ENTRIES_ASC_QUERY =
-            "select * from economy order by amount limit $1 offset $2\n";
+    @Language("MySQL") private static final String FETCH_TOP_ENTRIES_ASC_QUERY =
+            "select * from economy order by amount limit ? offset ?\n";
 
     private final ConnectionPool connectionPool;
+    private final MoneyboxConfiguration configuration;
 
-    public DatabaseMoneyboxRepository(ConnectionPool connectionPool) {
+    public MysqlMoneyboxRepository(ConnectionPool connectionPool, MoneyboxConfiguration configuration) {
         this.connectionPool = connectionPool;
+        this.configuration = configuration;
 
         connectionPool.create().flatMap(connection -> {
             final Statement statement = connection.createStatement(CREATE_TABLE_QUERY);
-            statement.bind(0, STARTING_BALANCE_AMOUNT);
+            statement.bind(0, configuration.getStartingBalanceAmount());
             return Mono.from(statement.execute())
                        .doOnTerminate(() -> Mono.from(connection.close())
                                                 .publishOn(Schedulers.boundedElastic())
@@ -57,7 +58,7 @@ public class DatabaseMoneyboxRepository implements MoneyboxRepository {
             return Mono.from(statement.execute())
                        .checkpoint("query-run")
                        .flatMap(ResultMapper.CREATE_BALANCE)
-                       .defaultIfEmpty(STARTING_BALANCE_AMOUNT)
+                       .defaultIfEmpty(configuration.getStartingBalanceAmount())
                        .checkpoint("result-map")
                        .timeout(Duration.ofSeconds(3L))
                        .doOnError(Throwable::printStackTrace)

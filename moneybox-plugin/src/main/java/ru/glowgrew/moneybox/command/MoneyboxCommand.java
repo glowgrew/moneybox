@@ -12,8 +12,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import ru.glowgrew.moneybox.MoneyboxConstants;
 import ru.glowgrew.moneybox.api.MoneyboxApi;
+import ru.glowgrew.moneybox.configuration.MoneyboxConfiguration;
+import ru.glowgrew.moneybox.localization.LocalizationService;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,10 +22,19 @@ public final class MoneyboxCommand implements RegistrableCommand {
 
     private final MoneyboxApi moneyboxApi;
     private final BukkitAudiences adventureApi;
+    private final MoneyboxConfiguration configuration;
+    private final LocalizationService localizationService;
 
-    public MoneyboxCommand(MoneyboxApi moneyboxApi, BukkitAudiences adventureApi) {
+    public MoneyboxCommand(
+            MoneyboxApi moneyboxApi,
+            BukkitAudiences adventureApi,
+            MoneyboxConfiguration configuration,
+            LocalizationService localizationService
+    ) {
         this.moneyboxApi = moneyboxApi;
         this.adventureApi = adventureApi;
+        this.configuration = configuration;
+        this.localizationService = localizationService;
     }
 
     @Override
@@ -86,7 +96,7 @@ public final class MoneyboxCommand implements RegistrableCommand {
         final CommandSender sender = context.getSender();
         final String target = context.get("target");
 
-        moneyboxApi.setBalanceAsync(target, MoneyboxConstants.STARTING_BALANCE_AMOUNT).doOnSuccess(unused -> {
+        moneyboxApi.setBalanceAsync(target, configuration.getStartingBalanceAmount()).doOnSuccess(unused -> {
             adventureApi.sender(sender)
                         .sendMessage(Component.translatable("command.purge.success", NamedTextColor.GREEN)
                                               .args(Component.text(target)));

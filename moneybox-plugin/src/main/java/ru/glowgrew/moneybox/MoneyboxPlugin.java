@@ -15,13 +15,21 @@ import org.bukkit.plugin.java.annotation.plugin.author.Author;
 import reactor.core.publisher.Mono;
 import ru.glowgrew.moneybox.api.MoneyboxApi;
 import ru.glowgrew.moneybox.command.CommandService;
-import ru.glowgrew.moneybox.database.*;
+import ru.glowgrew.moneybox.configuration.MoneyboxConfiguration;
+import ru.glowgrew.moneybox.configuration.YamlMoneyboxConfiguration;
+import ru.glowgrew.moneybox.database.ConnectionFactoryProvider;
+import ru.glowgrew.moneybox.database.ConnectionPoolService;
+import ru.glowgrew.moneybox.database.ConnectionPoolServiceImpl;
+import ru.glowgrew.moneybox.database.ConnectionType;
 import ru.glowgrew.moneybox.database.pool.ConnectionPoolConfigurationProvider;
-import ru.glowgrew.moneybox.database.util.EnvironmentUtils;
 import ru.glowgrew.moneybox.environment.ServerEnvironmentProvider;
 import ru.glowgrew.moneybox.localization.MoneyboxLocalizationService;
-import ru.glowgrew.moneybox.postgresql.DatabaseMoneyboxRepository;
+import ru.glowgrew.moneybox.mysql.MysqlMoneyboxRepository;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +41,7 @@ public final class MoneyboxPlugin extends JavaPlugin {
     private ConnectionPool connectionPool;
     private MoneyboxLocalizationService localizationService;
     private BukkitAudiences adventureApi;
+    private MoneyboxConfiguration configuration;
 
     @Override
     public void onDisable() {
@@ -50,13 +59,19 @@ public final class MoneyboxPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         getLogger().info(String.format("Welcome to Moneybox! We're running on %s environment.",
                                        ServerEnvironmentProvider.get().getName()));
+        configuration = new YamlMoneyboxConfiguration(() -> {
+            reloadConfig();
+            return getConfig();
+        });
 
         connectionPool = constructConnectionPool();
         discoverConnection(connectionPool);
 
-        MoneyboxRepository moneyboxRepository = new DatabaseMoneyboxRepository(connectionPool);
+        MoneyboxRepository moneyboxRepository = new MysqlMoneyboxRepository(connectionPool, configuration);
         MoneyboxApi moneyboxApi = new CachingMoneyboxApi(this, moneyboxRepository);
 
         Bukkit.getServicesManager().register(MoneyboxApi.class, moneyboxApi, this, ServicePriority.Normal);
@@ -65,32 +80,51 @@ public final class MoneyboxPlugin extends JavaPlugin {
 
         localizationService = MoneyboxLocalizationService.create(Key.key("moneybox", "localization"),
                                                                  new Locale("ru", "ru"),
-                                                                 this::getResource);
+                                                                 this::getLocalizationFile);
         localizationService.register();
 
-        final CommandService commandService = CommandService.create(this, moneyboxApi, adventureApi);
+        final CommandService commandService =
+                CommandService.create(this, moneyboxApi, adventureApi, configuration, localizationService);
         commandService.register();
+    }
+
+    private InputStream getLocalizationFile(String filename) {
+        final Path dataFolder = getDataFolder().toPath().resolve("localization");
+        boolean notExistsDataFolder = Files.notExists(dataFolder);
+        if (notExistsDataFolder) {
+            try {
+                Files.createDirectories(dataFolder);
+            } catch (IOException e) {
+                throw new RuntimeException("Exception due to create directory", e);
+            }
+        }
+        Path path = dataFolder.resolve(filename);
+        if (notExistsDataFolder || Files.notExists(path)) {
+            try {
+                Files.copy(getResource("localization/" + filename), path);
+            } catch (IOException e) {
+                throw new RuntimeException("Exception due to copy resource", e);
+            }
+        }
+        try {
+            return Files.newInputStream(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Exception due to load resource", e);
+        }
     }
 
     private ConnectionPool constructConnectionPool() {
         ConnectionPoolService connectionPoolService = new ConnectionPoolServiceImpl();
 
-        final String dataSourceType = MoneyboxConstants.ENVIRONMENT_PREFIX + "_DATASOURCE_TYPE";
-        final ConnectionType connectionType = ConnectionType.valueOf(EnvironmentUtils.getString(dataSourceType)
-                                                                                     .orElseThrow(() -> new IllegalArgumentException(
-                                                                                             "Please specify data source type using environment variable " +
-                                                                                             dataSourceType)));
+        final ConnectionType connectionType =
+                ConnectionType.valueOf("MYSQL"); // todo: retrieve connection type from configuration
 
         final ConnectionFactoryProvider connectionFactoryProvider =
                 connectionPoolService.getConnectionFactoryProvider(connectionType);
 
-        final ReactorCredentialsFactory credentialsFactory = connectionPoolService.createDefaultCredentialsFactory(
-                connectionType,
-                MoneyboxConstants.ENVIRONMENT_PREFIX);
-
         final ConnectionPoolConfigurationProvider configurationProvider =
                 connectionPoolService.getConnectionPoolConfigurationProvider(connectionFactoryProvider,
-                                                                             credentialsFactory);
+                                                                             configuration.getCredentials());
 
         return connectionPoolService.createConnectionPool(configurationProvider);
     }

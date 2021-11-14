@@ -1,6 +1,8 @@
 package ru.glowgrew.moneybox.database;
 
 import io.r2dbc.pool.ConnectionPool;
+import ru.glowgrew.moneybox.api.MoneyboxCredentials;
+import ru.glowgrew.moneybox.database.mysql.MysqlConnectionFactoryProvider;
 import ru.glowgrew.moneybox.database.pool.ConnectionPoolConfigurationProvider;
 import ru.glowgrew.moneybox.database.pool.SimpleConnectionPoolConfigurationProvider;
 import ru.glowgrew.moneybox.database.postgresql.PostgresqlConnectionFactoryProvider;
@@ -9,22 +11,20 @@ public class ConnectionPoolServiceImpl implements ConnectionPoolService {
 
     @Override
     public ConnectionFactoryProvider getConnectionFactoryProvider(ConnectionType connectionType) {
-        if (connectionType == ConnectionType.POSTGRESQL) {
-            return new PostgresqlConnectionFactoryProvider();
+        switch (connectionType) {
+            case POSTGRESQL:
+                return new PostgresqlConnectionFactoryProvider();
+            case MYSQL:
+                return new MysqlConnectionFactoryProvider();
         }
         throw new IllegalArgumentException();
     }
 
     @Override
-    public ReactorCredentialsFactory createDefaultCredentialsFactory(ConnectionType connectionType, String prefix) {
-        return new PrefixedEnvironmentReactorCredentialsFactory(connectionType, prefix);
-    }
-
-    @Override
     public ConnectionPoolConfigurationProvider getConnectionPoolConfigurationProvider(
-            ConnectionFactoryProvider connectionFactoryProvider, ReactorCredentialsFactory credentialsFactory
+            ConnectionFactoryProvider connectionFactoryProvider, MoneyboxCredentials credentials
     ) {
-        return new SimpleConnectionPoolConfigurationProvider(connectionFactoryProvider, credentialsFactory.create());
+        return new SimpleConnectionPoolConfigurationProvider(connectionFactoryProvider, credentials);
     }
 
     @Override

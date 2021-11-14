@@ -37,7 +37,7 @@ public final class MoneyboxLocalizationService implements LocalizationService {
     @Override
     public void load(Locale locale) {
         final String language = locale.getLanguage();
-        final String filename = "localization/" + language + ".yml";
+        final String filename = language + ".yml";
         log.info("Loading " + language + " language from file " + filename);
         try (InputStream inputStream = fileLoader.load(filename)) {
             if (inputStream == null) {
