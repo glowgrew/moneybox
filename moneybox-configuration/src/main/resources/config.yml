@@ -1,9 +1,9 @@
 datasource:
-  hostname: 127.0.0.1
-  port: 127.0.0.1
-  username: root
-  password: gbplf
-  database: test
+  hostname: '127.0.0.1'
+  port: 3306
+  username: 'root'
+  password: 'gbplf'
+  database: 'test'
 
 options:
   starting-balance: 0
