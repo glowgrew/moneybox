@@ -37,7 +37,7 @@ public class YamlMoneyboxConfiguration implements MoneyboxConfiguration {
     public void reload() {
         final Configuration configuration = configurationSupplier.get();
         this.credentials = MoneyboxCredentials.builder()
-                                              .setHost(configuration.getString(format("host"), "127.0.0.1"))
+                                              .setHost(configuration.getString(format("hostname"), "127.0.0.1"))
                                               .setPort(configuration.getInt(format("port"), 3306))
                                               .setUsername(configuration.getString(format("username"), "root"))
                                               .setPassword(configuration.getString(format("password"), "root"))
