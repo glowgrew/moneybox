@@ -10,6 +10,7 @@ public interface ServerEnvironment {
         CATSERVER(CatServerEnvironment.class, "catserver.server.CatServer"),
         ARCLIGHT(ArclightEnvironment.class, "io.izzel.arclight.common.mod.util.remapper.resource.RemapSourceHandler"),
         CRAFTBUKKIT(CraftbukkitEnvironment.class, "org.bukkit.craftbukkit.Main"),
+        NUKKIT(NukkitEnvironment.class, "cn.nukkit.Nukkit"),
 
         UNKNOWN(UnknownEnvironment.class, ""),
         ;

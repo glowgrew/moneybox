@@ -1,0 +1,43 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+def artifactName = 'Moneybox-Nukkit-' + rootProject.version + '.jar'
+
+tasks {
+    shadowJar {
+        minimize()
+
+        archiveFileName = artifactName
+
+        ['cloud.commandframework', 'io.leangen.geantyref', 'io.netty', 'com.google.common.base'].each {
+            relocate it, "${rootProject.group}.${rootProject.name}.shaded.${it.tokenize('.').last()}"
+        }
+    }
+
+    build {
+        dependsOn shadowJar, publishToMavenLocal
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            from project.shadow.component(publication)
+            artifactId = "${rootProject.name}"
+        }
+    }
+}
+
+def cloudVersion = '1.6.1'
+dependencies {
+    api project(':moneybox-api')
+    api project(':moneybox-environment')
+    api project(':moneybox-r2dbc-pool')
+    api project(':moneybox-localization')
+    api project(':moneybox-configuration')
+
+    compileOnlyApi 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+
+    api 'com.google.guava:guava:31.0.1-jre'
+}

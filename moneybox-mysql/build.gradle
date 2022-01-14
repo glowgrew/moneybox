@@ -1,0 +1,4 @@
+dependencies {
+    api project(':moneybox-r2dbc')
+    api project(':moneybox-configuration')
+}

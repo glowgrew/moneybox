@@ -1,11 +1,8 @@
 package ru.glowgrew.moneybox.api;
 
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
 
 /**
  * Represents an API that performs operations on players' economy accounts.
@@ -22,7 +19,7 @@ public interface MoneyboxApi {
      * @return the player's balance amount
      * @throws IllegalStateException if the player's balance amount is not cached
      */
-    long getCachedBalance(Player player);
+    long getCachedBalance(MoneyboxPlayer player);
 
     /**
      * Retrieve a player's offline balance amount asynchronously.
@@ -52,7 +49,7 @@ public interface MoneyboxApi {
      * @return an empty Mono
      * @throws IllegalStateException if the player is not online
      */
-    @NotNull Mono<Void> setBalanceAsync(Player player, long amount);
+    @NotNull Mono<Void> setBalanceAsync(MoneyboxPlayer player, long amount);
 
     /**
      * Set a player's offline balance amount to the given amount.
@@ -84,7 +81,7 @@ public interface MoneyboxApi {
      * @return the result of the check
      * @throws IllegalStateException if the player is not online
      */
-    boolean hasCachedBalance(Player player, long amount);
+    boolean hasCachedBalance(MoneyboxPlayer player, long amount);
 
     /**
      * Perform a check on the presence of a given amount on the player's offline balance.
@@ -117,7 +114,7 @@ public interface MoneyboxApi {
      * @return an empty Mono
      * @throws IllegalStateException if the player is not online
      */
-    @NotNull Mono<Void> depositBalanceAsync(Player player, long amount);
+    @NotNull Mono<Void> depositBalanceAsync(MoneyboxPlayer player, long amount);
 
     /**
      * Deposit a given amount to the player's offline balance.
@@ -149,7 +146,7 @@ public interface MoneyboxApi {
      * @return an empty Mono
      * @throws IllegalStateException if the player is not online
      */
-    @NotNull Mono<Void> withdrawBalanceAsync(Player player, long amount);
+    @NotNull Mono<Void> withdrawBalanceAsync(MoneyboxPlayer player, long amount);
 
     /**
      * Withdraw a given amount to the player's offline balance.
@@ -173,19 +170,6 @@ public interface MoneyboxApi {
 
     // -=-=-=-=-=-=--=-=-=-=-=-=- TOP -=-=-=-=-=-=--=-=-=-=-=-=- //
 
-    /**
-     * Retrieve an ordered player's offline balance leaderboard with a given offset and limit
-     * excluding {@code excludedPlayers}.
-     *
-     * @param direction       the direction of the leaderboard
-     * @param offset          the offset of the leaderboard
-     * @param limit           the maximum amount of included entries
-     * @param excludedPlayers the excluded players
-     * @return an ordered Flux with retrieved entries
-     */
-    @NotNull Flux<PlayerAccount> getTopAccounts(
-            Direction direction, int offset, int limit, Set<String> excludedPlayers
-    );
 
     /**
      * Retrieve an ordered player's offline balance leaderboard with a given offset and limit.
@@ -209,7 +193,7 @@ public interface MoneyboxApi {
      * was successful, {@code false} otherwise
      * @throws IllegalStateException if any of the accounts is not online
      */
-    @NotNull Mono<Boolean> transferBalanceAsync(Player player, Player recipient, long amount);
+    @NotNull Mono<Boolean> transferBalanceAsync(MoneyboxPlayer player, MoneyboxPlayer recipient, long amount);
 
     /**
      * Transfer a given balance amount between two accounts updating the cached ones, if available.
@@ -221,7 +205,7 @@ public interface MoneyboxApi {
      * was successful, {@code false} otherwise
      * @throws IllegalStateException if the player is not online
      */
-    @NotNull Mono<Boolean> transferBalanceAsync(Player player, String recipient, long amount);
+    @NotNull Mono<Boolean> transferBalanceAsync(MoneyboxPlayer player, String recipient, long amount);
 
     /**
      * Transfer a given balance amount between two accounts updating the cached ones, if available.
@@ -233,7 +217,7 @@ public interface MoneyboxApi {
      * was successful, {@code false} otherwise
      * @throws IllegalStateException if the recipient is not online
      */
-    @NotNull Mono<Boolean> transferOfflineBalanceAsync(String username, Player recipient, long amount);
+    @NotNull Mono<Boolean> transferOfflineBalanceAsync(String username, MoneyboxPlayer recipient, long amount);
 
     /**
      * Transfer a given balance amount between two accounts updating the cached ones, if available.

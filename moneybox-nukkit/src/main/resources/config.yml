@@ -1,0 +1,11 @@
+datasource:
+  hostname: '127.0.0.1'
+  port: 5432
+  username: 'postgres'
+  password: 'gbplf'
+  database: 'test'
+
+# postgresql, mysql
+selected-datasource: postgresql
+options:
+  starting-balance: 0
