@@ -1,0 +1,4 @@
+dependencies {
+    api project(':moneybox-mysql')
+    api project(':moneybox-postgresql')
+}

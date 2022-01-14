@@ -1,0 +1,9 @@
+name: Moneybox
+description: An economy plugin for different Minecraft server environments powered by Reactor Core
+version: 1.0.0
+author: glowgrew
+main: ru.glowgrew.moneybox.MoneyboxPlugin
+api: [ "1.0.0" ]
+
+commands:
+  balance:

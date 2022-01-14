@@ -1,4 +1,7 @@
 dependencies {
-    api 'net.kyori:adventure-platform-bukkit:4.0.0'
-    api 'dev.akkinoc.util:yaml-resource-bundle:2.1.0'
+    api 'net.kyori:adventure-api:4.0.1'
+    api 'net.kyori:adventure-text-serializer-legacy:4.0.1'
+    api 'net.kyori:adventure-text-serializer-plain:4.0.1'
+    api 'net.kyori:adventure-text-serializer-gson:4.0.1'
+    api 'dev.akkinoc.util:yaml-resource-bundle:2.3.0'
 }

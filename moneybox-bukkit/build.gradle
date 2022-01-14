@@ -1,0 +1,86 @@
+import static java.nio.file.Files.*
+import static java.nio.file.Paths.get
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+def artifactName = 'Moneybox'
+
+def environmentsDir = get "H:/Servers/"
+def environmentArtifacts = ['Arclight', 'CatServer', 'Crucible', '1.18.1'].collect {
+    environmentsDir.resolve "${it.toLowerCase()}/plugins/$artifactName-${it}-${rootProject.version}.jar"
+}
+
+// Distribute artifact to environments
+tasks.register('distributeArtifacts') {
+    def artifact = get "${project.tasks.shadowJar.destinationDirectory.get()}/${artifactName}.jar"
+    if (notExists(artifact)) {
+        return
+    }
+    environmentArtifacts.each {
+        copy artifact, it, REPLACE_EXISTING
+    }
+}
+
+// Delete distributed artifacts from environments
+tasks.register('deleteDistributedArtifacts') {
+    environmentArtifacts.each {
+        deleteIfExists it
+    }
+}
+
+tasks {
+    shadowJar {
+        minimize()
+
+        archiveFileName = artifactName + '.jar'
+
+        ['cloud.commandframework', 'io.leangen.geantyref', 'io.netty', 'com.google.common.base'].each {
+            relocate(it, "${rootProject.group}.${rootProject.name}.shaded.${it.tokenize('.').last()}")
+        }
+    }
+
+    build {
+        dependsOn shadowJar, publishToMavenLocal
+        doLast {
+            distributeArtifacts
+        }
+    }
+
+    clean {
+        dependsOn deleteDistributedArtifacts
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            from project.shadow.component(publication)
+            artifactId = "${rootProject.name}"
+        }
+    }
+}
+
+def cloudVersion = '1.6.1'
+dependencies {
+    api project(':moneybox-api')
+    api project(':moneybox-environment')
+    api project(':moneybox-r2dbc-pool')
+    api project(':moneybox-localization')
+    api project(':moneybox-configuration')
+
+    compileOnlyApi 'org.bukkit:craftbukkit:1.7.10-R0.1-SNAPSHOT'
+
+    api "cloud.commandframework:cloud-core:$cloudVersion"
+    api "cloud.commandframework:cloud-bukkit:$cloudVersion"
+    api "cloud.commandframework:cloud-minecraft-extras:$cloudVersion"
+
+    api 'net.kyori:adventure-platform-bukkit:4.0.1'
+
+    api 'com.google.guava:guava:31.0.1-jre'
+
+    compileOnly 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+    annotationProcessor 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+}
