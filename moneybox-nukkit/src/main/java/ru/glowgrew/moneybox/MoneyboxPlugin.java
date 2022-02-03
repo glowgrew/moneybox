@@ -1,7 +1,6 @@
 package ru.glowgrew.moneybox;
 
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.service.ServicePriority;
 import com.google.common.base.Stopwatch;
@@ -11,7 +10,7 @@ import io.r2dbc.spi.ValidationDepth;
 import net.kyori.adventure.key.Key;
 import reactor.core.publisher.Mono;
 import ru.glowgrew.moneybox.api.MoneyboxApi;
-import ru.glowgrew.moneybox.api.MoneyboxPlayer;
+import ru.glowgrew.moneybox.command.MoneyboxCommand;
 import ru.glowgrew.moneybox.configuration.MoneyboxConfiguration;
 import ru.glowgrew.moneybox.configuration.MoneyboxConfigurationProvider;
 import ru.glowgrew.moneybox.database.ConnectionFactoryByCredentialsProvider;
@@ -71,17 +70,7 @@ public final class MoneyboxPlugin extends PluginBase {
                                                                  this::getLocalizationFile);
         localizationService.register();
 
-        getServer().getCommandMap().register("balance", new Command("balance", "Получить Ваш текущий баланс") {
-
-            @Override
-            public boolean execute(CommandSender sender, String label, String[] args) {
-                final long balance = moneyboxApi.getCachedBalance(MoneyboxPlayer.of(sender.getName()));
-                sender.sendMessage("Ваш баланс: " + balance);
-                return true;
-            }
-        }, "balance");
-
-        MoneyboxApi api = getServer().getServiceManager().getProvider(MoneyboxApi.class).getProvider();
+        ((PluginCommand<?>) getCommand("moneybox")).setExecutor(new MoneyboxCommand(this, moneyboxApi));
     }
 
     @Override
@@ -93,14 +82,6 @@ public final class MoneyboxPlugin extends PluginBase {
         if (connectionPool != null) {
             connectionPool.close();
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if ("example".equals(command.getName())) {
-            getLogger().info("Command sender is" + " " + sender.getName());
-        }
-        return true;
     }
 
     private InputStream getLocalizationFile(String filename) {

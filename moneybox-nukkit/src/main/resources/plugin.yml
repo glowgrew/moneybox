@@ -6,4 +6,11 @@ main: ru.glowgrew.moneybox.MoneyboxPlugin
 api: [ "1.0.0" ]
 
 commands:
-  balance:
+  moneybox:
+    aliases:
+      - mb
+      - balance
+      - bal
+      - economybalance
+      - lumens
+      - ebal

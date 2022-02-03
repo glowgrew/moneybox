@@ -20,16 +20,6 @@ tasks {
     }
 }
 
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            from project.shadow.component(publication)
-            artifactId = "${rootProject.name}"
-        }
-    }
-}
-
-def cloudVersion = '1.6.1'
 dependencies {
     api project(':moneybox-api')
     api project(':moneybox-environment')

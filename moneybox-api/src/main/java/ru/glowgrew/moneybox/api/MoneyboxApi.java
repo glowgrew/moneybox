@@ -34,8 +34,6 @@ public interface MoneyboxApi {
      *
      * @param username the username
      * @return a Mono with the player's balance amount
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player is online or offline.
      */
     @NotNull Mono<Long> getBalanceAsync(String username);
 
@@ -66,8 +64,6 @@ public interface MoneyboxApi {
      * @param username the username
      * @param amount   the amount to set the player's balance to
      * @return an empty Mono
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player is online or offline.
      */
     @NotNull Mono<Void> setBalanceAsync(String username, long amount);
 
@@ -99,8 +95,6 @@ public interface MoneyboxApi {
      * @param username the username
      * @param amount   the amount to check if the player's balance has
      * @return a Mono with the result of the check
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player is online or offline.
      */
     @NotNull Mono<Boolean> hasBalanceAsync(String username, long amount);
 
@@ -131,8 +125,6 @@ public interface MoneyboxApi {
      * @param username the username
      * @param amount   the amount to deposit
      * @return an empty Mono
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player is online or offline.
      */
     @NotNull Mono<Void> depositBalanceAsync(String username, long amount);
 
@@ -163,8 +155,6 @@ public interface MoneyboxApi {
      * @param username the username
      * @param amount   the amount to withdraw
      * @return an empty Mono
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player is online or offline.
      */
     @NotNull Mono<Void> withdrawBalanceAsync(String username, long amount);
 
@@ -238,8 +228,6 @@ public interface MoneyboxApi {
      * @param amount    the amount to transfer
      * @return a Mono with the result of the transaction; {@code true} if the transfer
      * was successful, {@code false} otherwise
-     * @apiNote use this method if you unsure which method to choose from the above, as it
-     * combines them by checking whether the player or recipient is online or offline.
      */
     @NotNull Mono<Boolean> transferBalanceAsync(String username, String recipient, long amount);
 

@@ -1,3 +1,28 @@
-dependencies {
-//    compileOnlyApi 'org.bukkit:craftbukkit:1.7.10-R0.1-SNAPSHOT'
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
+
+publishing {
+    repositories.maven {
+        name 'maven'
+        url 'https://nexus.rednite.ru/repository/shkolakola-snapshots/'
+        credentials {
+            username = System.getenv("CI_USER")
+            password = System.getenv("CI_PASSWORD")
+        }
+    }
+
+    publications {
+        myApp(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            from components.java
+        }
+    }
+}
+
+
+
